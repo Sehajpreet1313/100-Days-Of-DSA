@@ -1,47 +1,57 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define MAX 1000
+struct Node {
+    int data;
+    struct Node* next;
+};
 
-int queue[MAX], front = 0, rear = -1;
-int stack[MAX], top = -1;
+struct Node *front = NULL, *rear = NULL;
 
 void enqueue(int x) {
-    queue[++rear] = x;
+    struct Node* temp = (struct Node*)malloc(sizeof(struct Node));
+    temp->data = x;
+    temp->next = NULL;
+
+    if (rear == NULL) {
+        front = rear = temp;
+        return;
+    }
+
+    rear->next = temp;
+    rear = temp;
 }
 
 int dequeue() {
-    return queue[front++];
-}
+    if (front == NULL)
+        return -1;
 
-void push(int x) {
-    stack[++top] = x;
-}
+    struct Node* temp = front;
+    int val = temp->data;
+    front = front->next;
 
-int pop() {
-    return stack[top--];
+    if (front == NULL)
+        rear = NULL;
+
+    free(temp);
+    return val;
 }
 
 int main() {
     int n;
     scanf("%d", &n);
 
-    for (int i = 0; i < n; i++) {
-        int x;
-        scanf("%d", &x);
-        enqueue(x);
-    }
+    while (n--) {
+        int type;
+        scanf("%d", &type);
 
-    for (int i = front; i <= rear; i++) {
-        push(queue[i]);
-    }
-
-    for (int i = front; i <= rear; i++) {
-        queue[i] = pop();
-    }
-
-    for (int i = front; i <= rear; i++) {
-        printf("%d ", queue[i]);
+        if (type == 1) {
+            int x;
+            scanf("%d", &x);
+            enqueue(x);
+        } else if (type == 2) {
+            printf("%d\n", dequeue());
+        }
     }
 
     return 0;
